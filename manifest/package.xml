@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
-    <!--types>
+    <types>
         <members>Contact</members>
         <name>CustomObject</name>
     </types>
@@ -41,7 +41,7 @@
         <members>MockValidAddressITL</members>
         <members>MockValidAddressUS</members>
         <name>StaticResource</name>
-    </types!-->
+    </types>
     <types>
         <members>SmartyCredentialsAccess</members>
         <name>PermissionSet</name>

@@ -8,7 +8,6 @@ public with sharing class BulkAddressValidationService {
      *
      * @param contactIdSet Set of Contact record IDs to validate.
      */
-    @AuraEnabled
     public static void validateContacts(Set<Id> contactIdSet) {
         if (contactIdSet?.size() > 0) {
             List<Contact> contactList = [
@@ -28,7 +27,33 @@ public with sharing class BulkAddressValidationService {
                     payload.add(new AddressValidationDTO(contact));
                 }
                 System.enqueueJob(new BulkAddressValidationQueueable(payload));
+                System.debug('Enqueued job for ' + contactIdSet.size() + ' contacts at time: ' + Datetime.now());
             }
+        }
+    }
+
+    /**
+     * @description Aura-enabled entry point that accepts Contact Ids, deduplicates, and delegates to validateContacts.
+     *
+     * @param contactIdList List of Contact record IDs to validate.
+     */
+    @AuraEnabled
+    public static void validateContactsAura(List<Id> contactIdList) {
+        if (contactIdList?.size() > 0) {
+            Set<Id> contactIdSet = new Set<Id>(contactIdList);
+            validateContacts(contactIdSet);
+        }
+    }
+
+    /**
+     * @description Invocable method for validating Contact addresses in bulk via Flow.
+     *
+     * @param contactIdList List of Contact record IDs to validate.
+     */
+    @InvocableMethod(label='Validate Contact Addresses' description='Enqueue bulk address validation for Contact records.')
+    public static void validateContactsInvocable(List<Id> contactIdList) {
+        if (contactIdList?.size() > 0) {
+            validateContacts(new Set<Id>(contactIdList));
         }
     }
 }

@@ -34,6 +34,7 @@ public with sharing class BulkAddressValidationQueueable implements Queueable, D
      * @param context Queueable context.
      */
     public void execute(QueueableContext context) {
+        System.debug('Starting address validation at time: ' + Datetime.now());
         if (payload?.size() > 0) {
             Integer total = payload.size();
             Integer chunkLimit = Math.min(CHUNK_SIZE, total);
@@ -53,6 +54,10 @@ public with sharing class BulkAddressValidationQueueable implements Queueable, D
 
             if (!remaining.isEmpty()) {
                 System.enqueueJob(new BulkAddressValidationQueueable(remaining));
+                System.debug('Enqueued next job for ' + remaining.size() + ' addresses at time: ' + Datetime.now());
+            }
+            else {
+                System.debug('Completed processing all address validations at time: ' + Datetime.now());
             }
         }
     }
