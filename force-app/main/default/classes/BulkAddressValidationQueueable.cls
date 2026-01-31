@@ -2,7 +2,7 @@
  * @description Queueable job to validate addresses in chunks using Smarty US/International APIs.
  * Can be improved to work with different API providers and SObjects via interfaces.
  */
-public with sharing class BulkAddressValidationQueueable implements Queueable, Database.AllowsCallouts {
+public inherited sharing class BulkAddressValidationQueueable implements Queueable, Database.AllowsCallouts {
     private static final Integer CHUNK_SIZE = 90;
     // First, I thought that we need to run the US API for all US addresses, so added these variants
     // Later tests showed that international API also works for US addresses
@@ -56,7 +56,7 @@ public with sharing class BulkAddressValidationQueueable implements Queueable, D
             Map<Id, Boolean> results = performCallouts(current);
             processResponse(results);
 
-            if (!remaining.isEmpty()) {
+            if (!remaining.isEmpty() && !Test.isRunningTest()) { // Tests do not support chaining queueables, so skip in test context
                 System.enqueueJob(new BulkAddressValidationQueueable(remaining));
                 System.debug('Enqueued next job for ' + remaining.size() + ' addresses at time: ' + Datetime.now());
             }
