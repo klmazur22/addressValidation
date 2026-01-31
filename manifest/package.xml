@@ -1,7 +1,16 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
-        <members>BulkAddressValidationCalloutService</members>
+        <members>Contact</members>
+        <name>CustomObject</name>
+    </types>
+    <types>
+        <members>AddressValidationCalloutService</members>
+        <members>AddressValidationDTO</members>
+        <members>BulkAddressValidationQueueable</members>
+        <members>BulkAddressValidationService</members>
+        <members>ContactAddressValidation</members>
+        <members>TestContactAddressValidation</members>
         <name>ApexClass</name>
     </types>
     <types>
@@ -9,9 +18,29 @@
         <name>CustomField</name>
     </types>
     <types>
+        <members>Smarty</members>
+        <name>ExternalCredential</name>
+    </types>
+    <types>
+        <members>contactAddressValidation</members>
+        <name>LightningComponentBundle</name>
+    </types>
+    <types>
+        <members>SmartyInternational</members>
+        <members>SmartyUS</members>
+        <name>NamedCredential</name>
+    </types>
+    <types>
         <members>SmartyInternational</members>
         <members>SmartyUS</members>
         <name>RemoteSiteSetting</name>
+    </types>
+    <types>
+        <members>MockInvalidAddressITL</members>
+        <members>MockInvalidAddressUS</members>
+        <members>MockValidAddressITL</members>
+        <members>MockValidAddressUS</members>
+        <name>StaticResource</name>
     </types>
     <version>65.0</version>
 </Package>
