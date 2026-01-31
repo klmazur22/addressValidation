@@ -1,5 +1,14 @@
+/**
+ * @description Service class to handle bulk address validation for Contact records.
+ */
 public with sharing class BulkAddressValidationService {
 
+    /**
+     * @description Validates addresses for a set of Contact records in bulk by enqueuing a Queueable job.
+     *
+     * @param contactIdSet Set of Contact record IDs to validate.
+     */
+    @AuraEnabled
     public static void validateContacts(Set<Id> contactIdSet) {
         if (contactIdSet?.size() > 0) {
             List<Contact> contactList = [

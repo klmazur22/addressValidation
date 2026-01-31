@@ -1,5 +1,5 @@
 /**
- * Data Transfer Object for Bulk Address Validation process.
+ * @description Data Transfer Object for Bulk Address Validation process.
  */
 public with sharing class AddressValidationDTO {
     public Id recordId;
