@@ -1,5 +1,5 @@
 /**
- * Queueable job to validate addresses in chunks using Smarty US/International APIs.
+ * @description Queueable job to validate addresses in chunks using Smarty US/International APIs.
  * Can be improved to work with different API providers and SObjects via interfaces.
  */
 public with sharing class BulkAddressValidationQueueable implements Queueable, Database.AllowsCallouts {
@@ -20,7 +20,7 @@ public with sharing class BulkAddressValidationQueueable implements Queueable, D
     private List<AddressValidationDTO> payload;
 
     /**
-     * Creates a new queueable instance.
+     * @description Creates a new queueable instance.
      *
      * @param payload List of address DTOs to process.
      */
@@ -29,7 +29,7 @@ public with sharing class BulkAddressValidationQueueable implements Queueable, D
     }
 
     /**
-     * Executes the queueable job: processes a chunk of addresses, performs callouts, processes response, and enqueues the next chunk if needed.
+     * @description Executes the queueable job: processes a chunk of addresses, performs callouts, processes response, and enqueues the next chunk if needed.
      *
      * @param context Queueable context.
      */
@@ -58,9 +58,9 @@ public with sharing class BulkAddressValidationQueueable implements Queueable, D
     }
 
     /**
-     * Performs callouts for a chunk of DTOs and returns validation results.
+     * @description Performs callouts for a chunk of DTOs and returns validation results.
      *
-     * @param chunk DTOs to validate.
+     * @param chunk List of DTOs to validate.
      * @return Map of Contact Id to validation result.
      */
     private static Map<Id, Boolean> performCallouts(List<AddressValidationDTO> chunk) {
@@ -109,7 +109,7 @@ public with sharing class BulkAddressValidationQueueable implements Queueable, D
     }
 
     /**
-     * Builds the US endpoint URL for a record.
+     * @description Builds the US endpoint URL for a record.
      *
      * @param record Address DTO.
      * @return Fully formed endpoint for US address.
@@ -129,7 +129,7 @@ public with sharing class BulkAddressValidationQueueable implements Queueable, D
     }
 
     /**
-     * Builds the international endpoint URL for a record.
+     * @description Builds the international endpoint URL for a record.
      *
      * @param record Address DTO.
      * @return Fully formed endpoint for international address.
@@ -148,7 +148,7 @@ public with sharing class BulkAddressValidationQueueable implements Queueable, D
     }
 
     /**
-     * Parses Smarty API response based on country.
+     * @description Parses Smarty API response based on country.
      *
      * @param response HTTP response.
      * @param country Country value from the DTO.
@@ -164,7 +164,7 @@ public with sharing class BulkAddressValidationQueueable implements Queueable, D
             if (items?.size() != 1) {
                 return false;
             }
-            return items?.get()?.metadata?.precision != STATUS_PRECISION_NONE;
+            return items[0]?.metadata?.precision != STATUS_PRECISION_NONE;
         }
 
         SmartyAddressValidationINTWrapper[] items = (SmartyAddressValidationINTWrapper[]) JSON.deserialize(response.getBody(), SmartyAddressValidationINTWrapper[].class);
@@ -175,29 +175,7 @@ public with sharing class BulkAddressValidationQueueable implements Queueable, D
     }
 
     /**
-     * Wrapper class for Smarty US address validation response.
-     */
-    private class SmartyAddressValidationUSWrapper {
-        public Metadata metadata;
-
-        private class Metadata {
-            public String precision;
-        }
-    }
-
-    /**
-     * Wrapper class for Smarty International address validation response.
-     */
-    private class SmartyAddressValidationINTWrapper {
-        public Analysis analysis;
-
-        private class Analysis {
-            public String verification_status;
-        }
-    }
-
-    /**
-     * Updates records with validation results.
+     * @description Updates records with validation results.
      *
      * @param results Map of record Id to validation result.
      */
@@ -212,6 +190,7 @@ public with sharing class BulkAddressValidationQueueable implements Queueable, D
                     Id = recordId,
                     AddressValid__c = results.get(recordId)
                 ));
+                System.debug('Contact Id: ' + recordId + ', AddressValid__c: ' + results.get(recordId));
             }
 
             if (!contactsToUpdate.isEmpty()) {
