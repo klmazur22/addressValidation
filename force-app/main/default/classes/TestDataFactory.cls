@@ -1,5 +1,11 @@
+/**
+ * @description Factory for creating shared test data.
+ */
 @IsTest
 public class TestDataFactory {
+    /**
+     * @description Creates baseline Contact records for tests.
+     */
     public static void createContacts() {
         List<Contact> contacts = new List<Contact>{
             new Contact(
