@@ -4,7 +4,11 @@
  */
 public with sharing class BulkAddressValidationQueueable implements Queueable, Database.AllowsCallouts {
     private static final Integer CHUNK_SIZE = 90;
-    private static final Set<String> COUNTRY_US_VARIANTS = new Set<String>{ 'US', 'USA', 'United States' };
+    // First, I thought that we need to run the US API for all US addresses, so added these variants
+    // Later tests showed that international API also works for US addresses
+    // US API does not even seem to be necessary, and it's not rorking with my subscription, but I will leave it here for now
+    //private static final Set<String> COUNTRY_US_VARIANTS = new Set<String>{ 'US', 'USA', 'United States' };
+    private static final Set<String> COUNTRY_US_VARIANTS = new Set<String>{'US'};
     private static final String STATUS_VERIFIED = 'Verified';
     private static final String STATUS_PRECISION_NONE = 'none';
     private static final String ENDPOINT_US = 'callout:SmartyUS/street-address';
@@ -86,12 +90,12 @@ public with sharing class BulkAddressValidationQueueable implements Queueable, D
                 HttpRequest request = new HttpRequest();
                 request.setMethod('GET');
 
-                // compare country to US/USA/United States variants
                 String endpoint = COUNTRY_US_VARIANTS.contains(record.country)
                     ? buildUsEndpoint(record)
                     : buildInternationalEndpoint(record);
 
                 if (endpoint == null) {
+                    System.debug('Invalid record: ' + record);
                     results.put(record.recordId, false);
                     continue;
                 }
@@ -161,8 +165,10 @@ public with sharing class BulkAddressValidationQueueable implements Queueable, D
      */
     private static Boolean parseResponse(HttpResponse response, String country) {
         if (response?.getStatusCode() != 200) {
+            System.debug('Country: ' + country + ', Invalid response status: ' + response?.getStatusCode() + ', body: ' + response?.getBody());
             return false;
         }
+        System.debug('Success! Country: ' + country + ', Response body: ' + response.getBody());
 
         if (COUNTRY_US_VARIANTS.contains(country)) {
             SmartyAddressValidationUSWrapper[] items = (SmartyAddressValidationUSWrapper[]) JSON.deserialize(response.getBody(), SmartyAddressValidationUSWrapper[].class);
