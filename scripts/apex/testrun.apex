@@ -14,4 +14,4 @@ Map<Id, Contact> contactMap = new Map<Id, Contact>([
     WHERE MailingCountry != null
     LIMIT 60
 ]);
-BulkAddressValidationService.validateContacts((List<Id)contactMap.keyset());
+BulkAddressValidationService.validateContacts(contactMap.keyset());
